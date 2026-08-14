@@ -1,0 +1,15 @@
+from pathlib import Path
+import re
+p=Path('/home/ubuntu/kentankclient/src/App.tsx')
+s=p.read_text()
+s=s.replace("const [selected, setSelected] = useState<Product | null>(null); const [loading", "const [selected, setSelected] = useState<Product | null>(null); const [heroIndex, setHeroIndex] = useState(0); const [loading")
+s=s.replace("  const filtered = useMemo", "  useEffect(() => { if (!banners.length) return; const timer = window.setInterval(() => setHeroIndex(current => (current + 1) % banners.length), 5000); return () => window.clearInterval(timer) }, [banners.length])\n  const filtered = useMemo")
+s=s.replace("const banner = banners[0]", "const banner = banners[heroIndex]")
+old=r'<form className="product-editor" onSubmit={saveBanner}>.*?</form><div className="banner-list">'
+new='''<form className="product-editor banner-image-form" onSubmit={saveBanner}><div className="full-field banner-image-help"><p className="eyebrow">Image carousel</p><p>Upload clean landscape images for the homepage. The promotional wording stays fixed on the website while these images rotate automatically.</p></div><div className="banner-upload full-field">{banner.image_url ? <img src={banner.image_url} alt="Banner preview" /> : <div className="empty-state">No banner image selected.</div>}<label className="secondary-button">{bannerBusy ? 'Uploading…' : 'Choose banner image'}<input type="file" accept="image/*" onChange={uploadBannerImage} disabled={bannerBusy} hidden /></label></div><label>Carousel order<input type="number" min="0" value={banner.sort_order} onChange={e => updateBanner('sort_order', e.target.value)} /></label><label className="check-field"><input type="checkbox" checked={banner.active} onChange={e => updateBanner('active', e.target.checked)} /> Include in rotation</label>{bannerMessage && <div className="success-note full-field">{bannerMessage}</div>}<div className="editor-actions full-field"><button className="primary-button" disabled={bannerBusy}>{bannerBusy ? <Spinner label="Saving…" /> : <>{editingBanner ? 'Update image' : 'Save image'} <span>↗</span></>}</button>{editingBanner && <button type="button" className="text-link" onClick={cancelBannerEdit}>Cancel edit</button>}</div></form><div className="banner-list">'''
+s,n=re.subn(old,new,s,flags=re.S)
+if n!=1: raise SystemExit(f'banner form replacement count {n}')
+p.write_text(s)
+
+css=Path('/home/ubuntu/kentankclient/src/App.css')
+css.write_text(css.read_text()+'''\n.hero-visual{height:clamp(400px,48vw,700px);min-height:0;aspect-ratio:16/9;background:#d4d6cd}.hero-visual img.hero-banner-image{width:100%;height:100%;object-fit:cover;object-position:center;display:block;animation:heroFade .7s ease both}@keyframes heroFade{from{opacity:.35;transform:scale(1.015)}to{opacity:1;transform:scale(1)}}.hero-caption{z-index:1}.banner-image-help{color:var(--muted);padding-bottom:4px}.banner-image-help p:not(.eyebrow){margin:0;max-width:650px}.banner-upload{min-height:190px}.banner-upload img{max-height:300px;object-fit:cover;object-position:center}@media(max-width:650px){.hero-visual{height:380px;aspect-ratio:auto}}\n''')
