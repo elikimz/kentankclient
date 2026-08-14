@@ -1,122 +1,32 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
+import { useEffect, useMemo, useState } from 'react'
+import type { FormEvent } from 'react'
 import './App.css'
+import mark from './assets/kentank-mark.png'
+import hero from './assets/kentank-hero.jpg'
 
+type Product = { id: number; name: string; slug: string; capacity_litres: number; category: string; price: number; note: string; colour: string; image_url?: string | null; featured: boolean; published: boolean }
+type View = 'home' | 'catalogue' | 'about' | 'admin'
+const API = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+const money = (value: number) => new Intl.NumberFormat('en-KE', { style: 'currency', currency: 'KES', maximumFractionDigits: 0 }).format(value)
+const capacity = (value: number) => `${value.toLocaleString('en-KE')} L`
+function Logo({ compact = false }: { compact?: boolean }) { return <div className={`brand ${compact ? 'brand-compact' : ''}`}><img src={mark} alt="Kentank mark" /><span><strong>KENTANK</strong><small>water storage, considered</small></span></div> }
+function ProductRow({ product, onSelect }: { product: Product; onSelect: (p: Product) => void }) { return <button className="product-row" onClick={() => onSelect(product)}><span className="product-index">{String(product.id).padStart(2, '0')}</span><span className="tank-silhouette" style={{ '--tank-colour': product.colour } as React.CSSProperties}><span /></span><span className="product-name"><strong>{product.name}</strong><small>{product.note}</small></span><span className="product-capacity">{capacity(product.capacity_litres)}</span><span className="product-price">{money(Number(product.price))}</span><span className="arrow">↗</span></button> }
 function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+  const [view, setView] = useState<View>('home'); const [products, setProducts] = useState<Product[]>([]); const [category, setCategory] = useState('All tanks'); const [query, setQuery] = useState(''); const [selected, setSelected] = useState<Product | null>(null); const [loading, setLoading] = useState(true); const [error, setError] = useState('')
+  useEffect(() => { fetch(`${API}/api/products`).then(r => { if (!r.ok) throw new Error('Unable to load the collection'); return r.json() }).then(setProducts).catch(() => setError('The collection is temporarily unavailable. Please refresh or speak with our team.')).finally(() => setLoading(false)) }, [])
+  const filtered = useMemo(() => products.filter(p => (category === 'All tanks' || p.category === category) && `${p.name} ${p.capacity_litres} ${p.category}`.toLowerCase().includes(query.toLowerCase())), [products, category, query])
+  const submitInquiry = async (event: FormEvent<HTMLFormElement>) => { event.preventDefault(); const form = new FormData(event.currentTarget); await fetch(`${API}/api/inquiries`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ product_id: selected?.id, customer_name: form.get('name'), contact: form.get('contact'), message: form.get('message') }) }); event.currentTarget.innerHTML = '<div class="success-note">Thank you. Our team will contact you shortly.</div>' }
+  if (view === 'admin') return <Admin products={products} setProducts={setProducts} setView={setView} />
+  const featured = products.filter(p => p.featured).slice(0, 3)
+  return <div className="site-shell"><header className="site-header"><button className="logo-button" onClick={() => setView('home')} aria-label="Return home"><Logo /></button><nav className="main-nav"><button className={view === 'catalogue' ? 'active' : ''} onClick={() => setView('catalogue')}>The collection</button><button className={view === 'about' ? 'active' : ''} onClick={() => setView('about')}>Our approach</button><a href="#contact">Contact</a></nav><div className="header-actions"><span className="location">Nairobi · Kenya</span><button className="outline-button" onClick={() => setView('admin')}>Admin portal</button><button className="menu-button" aria-label="Menu">☰</button></div></header>
+    {view === 'home' && <main><section className="hero-section"><div className="hero-copy"><p className="eyebrow">Water storage, considered</p><h1>Room to live.<br /><em>Water to last.</em></h1><p className="hero-lede">Thoughtfully made storage tanks for homes, farms, institutions, and the places that matter most.</p><div className="hero-actions"><button className="primary-button" onClick={() => setView('catalogue')}>Explore the collection <span>↗</span></button><a href="#contact" className="text-link">Speak with a specialist <span>→</span></a></div></div><div className="hero-visual"><img src={hero} alt="Kentank water storage tank beside a modern home" /><div className="hero-caption"><span>01 / 04</span><span>Designed for Kenyan conditions</span></div></div></section><section className="statement-section"><p className="eyebrow">The Kentank standard</p><div className="statement-grid"><h2>Quietly dependable.<br /><span>Beautifully practical.</span></h2><div><p>We believe water storage should feel like part of a well-considered home—not an afterthought. Our collection pairs robust polyethylene construction with proportions that sit comfortably in their surroundings.</p><button className="text-link" onClick={() => setView('about')}>Read our approach <span>→</span></button></div></div></section><section className="collection-section"><div className="section-heading"><div><p className="eyebrow">Selected capacity</p><h2>Find your reserve.</h2></div><button className="text-link" onClick={() => setView('catalogue')}>View all tanks <span>→</span></button></div>{loading ? <div className="loading-state">Loading the collection…</div> : error ? <div className="empty-state">{error}</div> : <div className="product-list">{featured.map(p => <ProductRow key={p.id} product={p} onSelect={setSelected} />)}</div>}</section><section className="details-band"><div><span className="big-number">01</span><p className="eyebrow">Made for the long view</p><h3>Every tank is a promise of a steadier tomorrow.</h3></div><div className="details-copy"><p>From reliable household reserves to resilient commercial storage, Kentank brings clarity to an essential part of everyday life.</p><div className="stats"><span><strong>{products.length || '—'}</strong><small>in collection</small></span><span><strong>10yr</strong><small>confidence</small></span><span><strong>KE</strong><small>made for home</small></span></div></div></section></main>}
+    {view === 'catalogue' && <main className="page-main"><div className="page-intro"><p className="eyebrow">The collection</p><h1>Water storage,<br /><em>made clear.</em></h1><p>Choose a capacity that works with your space, your rhythm, and your plans.</p></div><div className="catalogue-toolbar"><div className="filter-tabs">{['All tanks', 'Household', 'Large capacity', 'Commercial'].map(item => <button key={item} className={category === item ? 'selected' : ''} onClick={() => setCategory(item)}>{item}</button>)}</div><label className="search-field"><span>⌕</span><input value={query} onChange={e => setQuery(e.target.value)} placeholder="Search the collection" /></label></div>{loading ? <div className="loading-state">Loading the collection…</div> : <div className="catalogue-list">{filtered.length ? filtered.map(p => <ProductRow key={p.id} product={p} onSelect={setSelected} />) : <div className="empty-state">No tanks match that search.</div>}</div>}</main>}
+    {view === 'about' && <main className="page-main about-page"><div className="page-intro"><p className="eyebrow">Our approach</p><h1>Built around<br /><em>what matters.</em></h1><p>Water security is not a luxury. It is the quiet infrastructure behind a good day.</p></div><div className="about-grid"><div className="about-quote">“The best product is the one you stop noticing—because it simply works.”</div><div className="about-copy"><p>Kentank is an independent water-storage company focused on durable, practical solutions for Kenyan homes and working spaces.</p><p>We help you choose the right capacity, plan a sensible installation, and keep your reserve ready for the seasons ahead. No unnecessary complexity. Just considered storage, honest guidance, and responsive service.</p><div className="about-rule" /><span className="eyebrow">Good water storage is good planning.</span></div></div></main>}
+    <footer className="site-footer" id="contact"><div className="footer-top"><Logo compact /><div className="footer-contact"><p className="eyebrow">Start a conversation</p><a href="mailto:hello@kentank.co.ke">hello@kentank.co.ke</a><a href="tel:+254700000000">+254 700 000 000</a></div><div className="footer-links"><a href="#collection" onClick={() => setView('catalogue')}>Collection</a><a href="#about" onClick={() => setView('about')}>Our approach</a><a href="https://wa.me/254700000000">WhatsApp us</a></div></div><div className="footer-bottom"><span>© 2026 Kentank. Water storage, considered.</span><span>Made for Kenya · Built for tomorrow</span></div></footer>
+    {selected && <div className="modal-backdrop" onClick={() => setSelected(null)}><div className="inquiry-modal" onClick={e => e.stopPropagation()}><button className="modal-close" onClick={() => setSelected(null)}>×</button><p className="eyebrow">Request a quote</p><h2>{selected.name}<br /><em>{capacity(selected.capacity_litres)}</em></h2><p>{selected.note}</p><div className="modal-price">From <strong>{money(Number(selected.price))}</strong></div><form onSubmit={submitInquiry}><input name="name" required placeholder="Your name" /><input name="contact" required placeholder="Phone or email" /><textarea name="message" required placeholder="Tell us about your site or delivery needs" rows={3} /><button className="primary-button wide">Send enquiry <span>↗</span></button></form></div></div>}
+    <div className="scroll-marker">Scroll to explore <span>↓</span></div></div>
 }
+function Admin({ products, setProducts, setView }: { products: Product[]; setProducts: (products: Product[]) => void; setView: (view: View) => void }) { const [tab, setTab] = useState('Overview'); const [token, setToken] = useState(localStorage.getItem('kentank_admin_token') || ''); const [authed, setAuthed] = useState(Boolean(token)); const [inquiries, setInquiries] = useState<any[]>([]); const loadAdmin = async (path: string) => { const response = await fetch(`${API}${path}`, { headers: { 'X-Admin-Token': token } }); if (!response.ok) throw new Error('Admin authentication failed'); return response.json() }; const login = (e: FormEvent) => { e.preventDefault(); localStorage.setItem('kentank_admin_token', token); setAuthed(true) }; useEffect(() => { if (!authed) return; loadAdmin('/api/admin/products').then(setProducts).catch(() => setAuthed(false)); loadAdmin('/api/admin/inquiries').then(setInquiries).catch(() => undefined) }, [authed]); if (!authed) return <div className="admin-login"><Logo /><h1>Admin workspace</h1><p>Enter the private access token configured for the API.</p><form onSubmit={login}><input type="password" value={token} onChange={e => setToken(e.target.value)} placeholder="Admin token" required /><button className="primary-button">Enter workspace ↗</button></form><button className="text-link" onClick={() => setView('home')}>← Return to store</button></div>; return <div className="admin-shell"><aside className="admin-sidebar"><button className="logo-button" onClick={() => setView('home')}><Logo compact /></button><p className="admin-label">Workspace</p>{['Overview', 'Products', 'Enquiries'].map(item => <button key={item} className={`admin-nav ${tab === item ? 'active' : ''}`} onClick={() => setTab(item)}>{item}</button>)}<div className="admin-sidebar-bottom"><span className="status-dot" />Store is live<button onClick={() => setView('home')}>← Back to store</button></div></aside><main className="admin-main"><div className="admin-top"><div><p className="eyebrow">Kentank / {tab}</p><h1>{tab === 'Overview' ? 'Good morning.' : tab}</h1></div><div className="admin-user">EK <span>Admin</span></div></div>{tab === 'Overview' && <><div className="admin-metrics"><div><span>Published products</span><strong>{products.filter(p => p.published).length}</strong><small>Live in catalogue</small></div><div><span>Open enquiries</span><strong>{inquiries.filter(i => i.status === 'new').length}</strong><small>Awaiting reply</small></div><div><span>Catalogue categories</span><strong>{new Set(products.map(p => p.category)).size}</strong><small>Managed from API</small></div></div><div className="admin-grid"><section className="admin-panel"><div className="panel-heading"><div><p className="eyebrow">Recent activity</p><h2>Store pulse</h2></div></div>{inquiries.slice(0, 3).map(i => <div className="activity-row" key={i.id}><span className="activity-icon">◎</span><div><strong>{i.customer_name}</strong><small>{i.contact} · {new Date(i.created_at).toLocaleDateString()}</small></div><b>{i.status}</b></div>)}{!inquiries.length && <div className="empty-state">No enquiries yet.</div>}</section><section className="admin-panel feature-panel"><p className="eyebrow">Collection health</p><h2>A calm store is a healthy store.</h2><p>Your products are coming from the database and can be managed from this workspace.</p><button className="primary-button" onClick={() => setTab('Products')}>Manage catalogue <span>→</span></button></section></div></>}{tab === 'Products' && <section className="admin-panel admin-table"><div className="panel-heading"><div><p className="eyebrow">Catalogue manager</p><h2>Products</h2></div><button className="primary-button" onClick={() => setTab('New product')}>+ Add product</button></div>{products.map(p => <div className="admin-product-row" key={p.id}><span className="tank-mini" style={{ '--tank-colour': p.colour } as React.CSSProperties} /><div><strong>{p.name}</strong><small>{capacity(p.capacity_litres)} · {p.category}</small></div><span>{money(Number(p.price))}</span><b>{p.published ? 'Published' : 'Draft'}</b><button onClick={() => setTab(`Edit:${p.id}`)}>Edit →</button></div>)}</section>}{tab === 'Enquiries' && <section className="admin-panel"><div className="panel-heading"><div><p className="eyebrow">Customer conversations</p><h2>Enquiries</h2></div></div>{inquiries.map(i => <div className="content-editor-row" key={i.id}><span><strong>{i.customer_name}</strong><small>{i.message}</small></span><span>{i.status}</span><button>Reply →</button></div>)}{!inquiries.length && <div className="empty-state">No enquiries yet.</div>}</section>}{(tab === 'New product' || tab.startsWith('Edit:')) && <ProductEditor product={tab.startsWith('Edit:') ? products.find(p => p.id === Number(tab.split(':')[1])) : undefined} token={token} api={API} onSaved={(next) => { setProducts(products.some(p => p.id === next.id) ? products.map(p => p.id === next.id ? next : p) : [...products, next]); setTab('Products') }} onDeleted={(id) => { setProducts(products.filter(p => p.id !== id)); setTab('Products') }} />}</main></div> }
+function ProductEditor({ product, token, api, onSaved, onDeleted }: { product?: Product; token: string; api: string; onSaved: (product: Product) => void; onDeleted: (id: number) => void }) { const [form, setForm] = useState({ name: product?.name || '', slug: product?.slug || '', capacity_litres: product?.capacity_litres || 1000, category: product?.category || 'Household', price: product?.price || 0, note: product?.note || '', colour: product?.colour || '#d7c9b6', featured: product?.featured || false, published: product?.published ?? true, image_url: product?.image_url || '' }); const [saving, setSaving] = useState(false); const [message, setMessage] = useState(''); const update = (key: string, value: any) => setForm(prev => ({ ...prev, [key]: value })); const save = async (event: FormEvent) => { event.preventDefault(); setSaving(true); setMessage(''); const response = await fetch(`${api}/api/admin/products${product ? `/${product.id}` : ''}`, { method: product ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json', 'X-Admin-Token': token }, body: JSON.stringify({ ...form, capacity_litres: Number(form.capacity_litres), price: Number(form.price), image_url: form.image_url || null }) }); if (!response.ok) { setMessage('Could not save this product. Check the details and try again.'); setSaving(false); return } onSaved(await response.json()) }; const remove = async () => { if (!product || !confirm('Delete this product?')) return; const response = await fetch(`${api}/api/admin/products/${product.id}`, { method: 'DELETE', headers: { 'X-Admin-Token': token } }); if (response.ok) onDeleted(product.id); else setMessage('Could not delete this product.'); }; return <section className="admin-panel editor-panel"><div className="panel-heading"><div><p className="eyebrow">{product ? 'Edit catalogue item' : 'New catalogue item'}</p><h2>{product ? product.name : 'Add a product'}</h2></div>{product && <button className="danger-link" onClick={remove}>Delete product</button>}</div><form className="product-editor" onSubmit={save}><label>Name<input required value={form.name} onChange={e => update('name', e.target.value)} /></label><label>Slug<input required value={form.slug} onChange={e => update('slug', e.target.value)} /></label><label>Capacity in litres<input required type="number" min="1" value={form.capacity_litres} onChange={e => update('capacity_litres', e.target.value)} /></label><label>Category<select value={form.category} onChange={e => update('category', e.target.value)}><option>Household</option><option>Large capacity</option><option>Commercial</option></select></label><label>Price in KES<input required type="number" min="0" value={form.price} onChange={e => update('price', e.target.value)} /></label><label>Tank colour<input type="color" value={form.colour} onChange={e => update('colour', e.target.value)} /></label><label className="full-field">Short description<textarea required rows={3} value={form.note} onChange={e => update('note', e.target.value)} /></label><label className="full-field">Image URL (optional)<input value={form.image_url} onChange={e => update('image_url', e.target.value)} /></label><label className="check-field"><input type="checkbox" checked={form.featured} onChange={e => update('featured', e.target.checked)} /> Feature on home page</label><label className="check-field"><input type="checkbox" checked={form.published} onChange={e => update('published', e.target.checked)} /> Publish in collection</label>{message && <div className="error-note full-field">{message}</div>}<div className="editor-actions full-field"><button type="submit" className="primary-button" disabled={saving}>{saving ? 'Saving…' : 'Save product'} <span>↗</span></button></div></form></section> }
 
 export default App
