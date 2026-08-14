@@ -6,7 +6,7 @@ import hero from './assets/kentank-hero.jpg'
 
 type Product = { id: number; name: string; slug: string; capacity_litres: number; category: string; price: number; note: string; colour: string; image_url?: string | null; featured: boolean; published: boolean }
 type View = 'home' | 'catalogue' | 'about' | 'admin'
-const API = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+const API = import.meta.env.VITE_API_URL || 'https://kentankapi.onrender.com'
 const money = (value: number) => new Intl.NumberFormat('en-KE', { style: 'currency', currency: 'KES', maximumFractionDigits: 0 }).format(value)
 const capacity = (value: number) => `${value.toLocaleString('en-KE')} L`
 function Logo({ compact = false }: { compact?: boolean }) { return <div className={`brand ${compact ? 'brand-compact' : ''}`}><img src={mark} alt="Kentank mark" /><span><strong>KENTANK</strong><small>water storage, considered</small></span></div> }
