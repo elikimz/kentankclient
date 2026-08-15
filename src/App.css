@@ -87,3 +87,9 @@
 .product-row .product-thumb{height:230px;border-radius:0;background:transparent;overflow:hidden;display:grid;place-items:center}
 .product-row .product-thumb img{width:100%;height:100%;object-fit:contain;object-position:center;display:block}
 @media(max-width:650px){.product-row .product-thumb{height:190px}.product-row .product-thumb img{object-fit:contain}}
+
+/* Final transparent product presentation */
+.product-row:hover,.product-row:focus-visible{background:transparent!important;box-shadow:none!important}
+.product-row .product-thumb{background:transparent!important;height:250px;border-radius:0}
+.product-row .product-thumb img{object-fit:contain;object-position:center}
+@media(max-width:650px){.product-row .product-thumb{height:205px}}
