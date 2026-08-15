@@ -78,3 +78,7 @@
 @media(max-width:900px){.hero-banner-contact-strip{right:7vw;bottom:90px;max-width:56vw}}
 @media(max-width:650px){.hero-banner-contact-strip{left:7vw;right:7vw;bottom:76px;max-width:none;padding:10px 12px}.hero-banner-contact-strip .contact-actions{display:grid;grid-template-columns:1fr 1fr}.hero-banner-contact-strip .contact-action{min-width:0;padding:9px 10px}}
 
+
+/* Product items sit directly on the catalogue background */
+.product-row{background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important}
+.product-row:hover{background:rgba(0,127,130,.035)!important;box-shadow:none!important;transform:none}
