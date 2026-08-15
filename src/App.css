@@ -71,3 +71,9 @@
 .header-contact-link{font-size:13px;font-weight:800;padding:7px 10px;border-radius:999px;color:#fff;background:var(--teal);animation:contactPulse 2.8s ease-in-out infinite}
 .header-contact-link+.header-contact-link{background:var(--orange)}
 @media(max-width:720px){.contact-action-phone,.contact-action-email{min-width:145px;font-size:13px;padding:12px 14px}.contact-actions-compact{gap:8px}.contact-actions-compact .contact-action{min-width:0;flex:1}}
+
+.hero-banner-contact-strip{position:absolute;z-index:5;right:8vw;bottom:92px;display:grid;gap:8px;max-width:min(440px,42vw);padding:14px 16px;border:1px solid rgba(255,255,255,.34);border-radius:18px;background:rgba(5,19,27,.58);backdrop-filter:blur(16px);box-shadow:0 16px 36px rgba(0,0,0,.2)}
+.hero-banner-contact-strip>p{margin:0;color:rgba(255,255,255,.78);font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+.hero-banner-contact-strip .contact-actions{margin-top:0;gap:8px}.hero-banner-contact-strip .contact-action{min-width:150px;padding:10px 12px;font-size:12px}.hero-banner-contact-strip .contact-action small{font-size:10px}
+@media(max-width:900px){.hero-banner-contact-strip{right:7vw;bottom:90px;max-width:56vw}}
+@media(max-width:650px){.hero-banner-contact-strip{left:7vw;right:7vw;bottom:76px;max-width:none;padding:10px 12px}.hero-banner-contact-strip .contact-actions{display:grid;grid-template-columns:1fr 1fr}.hero-banner-contact-strip .contact-action{min-width:0;padding:9px 10px}}
