@@ -78,21 +78,3 @@
 @media(max-width:900px){.hero-banner-contact-strip{right:7vw;bottom:90px;max-width:56vw}}
 @media(max-width:650px){.hero-banner-contact-strip{left:7vw;right:7vw;bottom:76px;max-width:none;padding:10px 12px}.hero-banner-contact-strip .contact-actions{display:grid;grid-template-columns:1fr 1fr}.hero-banner-contact-strip .contact-action{min-width:0;padding:9px 10px}}
 
-/* Flat catalogue presentation: no product cards */
-.product-list,.catalogue-list{display:grid;grid-template-columns:1fr;gap:0}
-.product-row{display:grid;grid-template-columns:96px minmax(220px,1fr) 140px 170px 32px;align-items:center;min-height:148px;padding:22px 0 22px 38px;background:transparent;border:0;border-bottom:1px solid rgba(11,23,32,.16);border-radius:0;box-shadow:none;text-align:left;transition:background .2s ease,padding-left .2s ease}
-.product-row:hover{background:rgba(0,127,130,.045);padding-left:44px;transform:none;box-shadow:none}
-.product-row .product-index{top:25px;left:0;color:var(--orange);font-size:11px;font-weight:800;letter-spacing:.08em}
-.product-row .product-thumb{width:82px;height:82px;border-radius:0;background:transparent}
-.product-row .tank-silhouette{width:70px;height:84px;border-radius:0}
-.product-row .product-name{display:grid;gap:7px;min-width:0}
-.product-row .product-name strong{color:#092b35;font-size:clamp(18px,1.6vw,25px);font-weight:850;letter-spacing:-.025em}
-.product-row .product-name small{color:#71808a;font-size:12px}
-.product-row .product-capacity{color:var(--teal);font-size:14px;font-weight:800;letter-spacing:.02em}
-.product-row .product-price{display:grid;justify-items:start;gap:3px;color:var(--orange);font-size:15px;font-weight:800}
-.product-row .product-price strong{font-size:18px;color:#c85d4d}
-.product-row .product-price del{color:#8b989b;font-size:11px;font-weight:500}
-.product-row .product-price small{color:#25805f;font-size:10px;font-weight:800;letter-spacing:.06em}
-.product-row .arrow{color:var(--orange);font-size:22px;font-weight:800}
-@media(max-width:900px){.product-row{grid-template-columns:82px minmax(180px,1fr) 110px 145px 28px;padding-left:30px}.product-row:hover{padding-left:34px}}
-@media(max-width:650px){.product-row{grid-template-columns:72px 1fr 24px;grid-template-areas:"image name arrow" "image capacity price";gap:7px 14px;min-height:118px;padding:18px 0 18px 28px}.product-row .product-thumb,.product-row .tank-silhouette{grid-area:image}.product-row .product-name{grid-area:name}.product-row .product-capacity{grid-area:capacity}.product-row .product-price{grid-area:price;justify-self:end;text-align:right;justify-items:end}.product-row .arrow{grid-area:arrow}.product-row .product-index{top:19px;left:0}.product-row:hover{padding-left:32px}}
