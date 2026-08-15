@@ -93,3 +93,8 @@
 .product-row .product-thumb{background:transparent!important;height:250px;border-radius:0}
 .product-row .product-thumb img{object-fit:contain;object-position:center}
 @media(max-width:650px){.product-row .product-thumb{height:205px}}
+
+/* Preserve the uploaded image's natural aspect ratio */
+.product-row .product-thumb{height:auto;min-height:250px;overflow:visible}
+.product-row .product-thumb img{width:auto;max-width:100%;height:auto;max-height:250px;object-fit:contain}
+@media(max-width:650px){.product-row .product-thumb{min-height:205px}.product-row .product-thumb img{max-height:205px}}
