@@ -1,6 +1,6 @@
 import { mkdir, writeFile } from 'node:fs/promises'
 
-const site = 'https://kentankltkenya.online'
+const site = 'https://kentankmanufacturerke.online'
 const api = process.env.VITE_API_URL || 'https://kentankapi.onrender.com'
 const urls = [
   ['/', '1.0'],

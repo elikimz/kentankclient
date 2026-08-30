@@ -17,9 +17,9 @@ type SeoProduct = {
 
 type SeoProps = { view: string; products: SeoProduct[]; selected?: SeoProduct | null }
 
-const SITE_URL = 'https://kentankltkenya.online'
-const DEFAULT_TITLE = 'Kentank Kenya | Durable Water Tanks and Water Storage Solutions'
-const DEFAULT_DESCRIPTION = 'Shop durable Kentank water tanks in Kenya for homes, farms, institutions, and businesses. Explore available capacities, prices, delivery guidance, and WhatsApp ordering.'
+const SITE_URL = 'https://kentankmanufacturerke.online'
+const DEFAULT_TITLE = 'AquaVault Water Systems | Durable Water Tanks and Water Storage Solutions'
+const DEFAULT_DESCRIPTION = 'Shop durable AquaVault water tanks in Kenya for homes, farms, institutions, and businesses. Explore available capacities, prices, delivery guidance, and WhatsApp ordering.'
 
 function upsertMeta(attribute: 'name' | 'property', key: string, content: string) {
   let element = document.head.querySelector(`meta[${attribute}="${key}"]`) as HTMLMetaElement | null
@@ -55,20 +55,20 @@ function upsertJsonLd(id: string, value: unknown) {
 export default function Seo({ view, products, selected }: SeoProps) {
   useEffect(() => {
     const page = view === 'catalogue'
-      ? { title: 'Water Tanks Kenya | Kentank Collection', description: 'Browse Kentank water tanks by capacity, compare prices, and order durable water storage for Kenyan homes, farms, institutions, and businesses.', path: '/collection' }
+      ? { title: 'Water Tanks Kenya | AquaVault Collection', description: 'Browse AquaVault water tanks by capacity, compare prices, and order durable water storage for Kenyan homes, farms, institutions, and businesses.', path: '/collection' }
       : view === 'about'
-        ? { title: 'About Kentank Kenya | Water Storage Solutions', description: 'Learn about Kentank’s practical approach to durable, dependable water storage solutions made for Kenyan conditions.', path: '/about' }
+        ? { title: 'About AquaVault Water Systems | Water Storage Solutions', description: 'Learn about AquaVault’s practical approach to durable, dependable water storage solutions made for Kenyan conditions.', path: '/about' }
         : view === 'account'
-          ? { title: 'Customer Account | Kentank Kenya', description: 'Track your Kentank orders and manage your customer account securely.', path: '/account' }
+          ? { title: 'Customer Account | AquaVault Water Systems', description: 'Track your AquaVault orders and manage your customer account securely.', path: '/account' }
           : view === 'product' && selected
-            ? { title: `${selected.name} ${selected.capacity_litres.toLocaleString('en-KE')}L | Kentank Kenya`, description: `${selected.note}. View price, availability, specifications, and order this Kentank water tank in Kenya.`, path: `/product/${selected.slug}` }
+            ? { title: `${selected.name} ${selected.capacity_litres.toLocaleString('en-KE')}L | AquaVault Water Systems`, description: `${selected.note}. View price, availability, specifications, and order this AquaVault water tank in Kenya.`, path: `/product/${selected.slug}` }
             : { title: DEFAULT_TITLE, description: DEFAULT_DESCRIPTION, path: '/' }
     const canonical = `${SITE_URL}${page.path}`
     document.title = page.title
     upsertMeta('name', 'description', page.description)
     upsertMeta('name', 'robots', view === 'account' ? 'noindex,follow' : 'index,follow')
     upsertMeta('property', 'og:type', 'website')
-    upsertMeta('property', 'og:site_name', 'Kentank Kenya')
+    upsertMeta('property', 'og:site_name', 'AquaVault Water Systems')
     upsertMeta('property', 'og:title', page.title)
     upsertMeta('property', 'og:description', page.description)
     upsertMeta('property', 'og:url', canonical)
@@ -81,7 +81,7 @@ export default function Seo({ view, products, selected }: SeoProps) {
     const graph: Record<string, unknown>[] = [{
       '@type': 'Organization',
       '@id': `${SITE_URL}/#organization`,
-      name: 'Kentank Kenya',
+      name: 'AquaVault Water Systems',
       url: SITE_URL,
       logo: `${SITE_URL}/kentank-mark.png`,
       email: 'info@tankscompanyke.com',
@@ -90,7 +90,7 @@ export default function Seo({ view, products, selected }: SeoProps) {
     }, {
       '@type': 'WebSite',
       '@id': `${SITE_URL}/#website`,
-      name: 'Kentank Kenya',
+      name: 'AquaVault Water Systems',
       url: SITE_URL,
       publisher: { '@id': `${SITE_URL}/#organization` },
       inLanguage: 'en-KE',
@@ -99,7 +99,7 @@ export default function Seo({ view, products, selected }: SeoProps) {
       graph.push({
         '@type': 'ItemList',
         '@id': `${canonical}#products`,
-        name: 'Kentank water tanks',
+        name: 'AquaVault water tanks',
         itemListElement: products.filter(product => product.published).slice(0, 12).map((product, index) => ({
           '@type': 'ListItem', position: index + 1, url: `${SITE_URL}/product/${product.slug}`, name: `${product.name} ${product.capacity_litres.toLocaleString('en-KE')}L`,
         })),
