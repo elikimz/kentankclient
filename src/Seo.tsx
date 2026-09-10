@@ -17,7 +17,7 @@ type SeoProduct = {
 
 type SeoProps = { view: string; products: SeoProduct[]; selected?: SeoProduct | null }
 
-const SITE_URL = 'https://www.kentankmanufacturerke.online'
+const SITE_URL = 'https://waterhaven.online'
 const DEFAULT_TITLE = 'AquaReserve Storage Kenya | Durable Water Tanks and Water Storage Solutions'
 const DEFAULT_DESCRIPTION = 'Shop durable AquaReserve water tanks in Kenya for homes, farms, institutions, and businesses. Explore available capacities, prices, delivery guidance, and WhatsApp ordering.'
 

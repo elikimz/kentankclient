@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /admin
 Disallow: /account
-Sitemap: https://www.kentankmanufacturerke.online/sitemap.xml
+Sitemap: https://waterhaven.online/sitemap.xml
